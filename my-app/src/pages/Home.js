@@ -13,12 +13,12 @@ export default function Home() {
 
     useEffect(()=>{
         dispatch(getEmployees())
-    }, [])
+    }, [dispatch])
 
     return (
         <div>
             <h2 style={{textAlign:"center", margin: "8px 0px"}}>Employee List</h2>
-            {employees.length == 0 ? <p style={{textAlign:"center"}}>Loading...</p> : 
+            {employees === undefined || employees.length === 0 ? <p style={{textAlign:"center"}}>Loading...</p> : 
                 <div>
                     <Table employees={employees} />
                     <Pagination currentPage={currentPage} totalPages={totalPages} />

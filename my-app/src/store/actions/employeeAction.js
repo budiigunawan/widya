@@ -1,7 +1,8 @@
 import swal from 'sweetalert';
 import axios from 'axios';
 
-const url = 'http://localhost:5000/api/employees';
+// const url = 'http://localhost:5000/api/employees';
+const url = 'https://infinite-tor-65239.herokuapp.com/api/employees';
 
 export function getEmployees(page=1){
     return (dispatch) => {

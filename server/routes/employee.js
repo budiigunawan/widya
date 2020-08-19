@@ -7,23 +7,55 @@ const Employee = require("../models/Employee");
 // @route   GET api/employees
 // @desc    Get all employees
 // @access  Public
-router.get("/", async (req, res) => {
+// router.get("/", async (req, res) => {
+//     try {
+//         const employees = await Employee.find();
+//         res.status(200).json({ employees });
+//     } catch (err) {
+//         console.log(err.message);
+//         res.status(500).json({ msg: "Server error" })
+//     }
+// })
+
+// @route   GET api/employees/:nik
+// @desc    Get an employee by nik
+// @access  Public
+router.get("/:nik", async (req, res) => {
     try {
-        const employees = await Employee.find();
-        res.status(200).json({ employees });
+        const employee = await Employee.findOne({ nik: req.params.nik });
+        
+        if (!employee) {
+            return res.status(404).json({ msg: "Employee not found" })
+        }
+        
+        res.status(200).json({ employee });
     } catch (err) {
         console.log(err.message);
         res.status(500).json({ msg: "Server error" })
     }
 })
 
-// @route   GET api/employees
-// @desc    Get an employee by nik
+// @route   GET api/employees?page=1&limit=10
+// @desc    Get employees pagination
 // @access  Public
-router.get("/:nik", async (req, res) => {
+router.get("/", async (req, res) => {
+    const { page = 1, limit = 10 } = req.query;
+
     try {
-        const employee = await Employee.findOne({ nik: req.params.nik });
-        res.status(200).json({ employee });
+        const employees = await Employee.find()
+        .limit(limit * 1)
+        .skip((page - 1) * limit)
+        .exec();
+  
+      // get total documents in the Posts collection 
+      const count = await Employee.countDocuments();
+  
+      // return response with posts, total pages, and current page
+      res.status(200).json({
+        employees,
+        totalPages: Math.ceil(count / limit),
+        currentPage: page
+      });
     } catch (err) {
         console.log(err.message);
         res.status(500).json({ msg: "Server error" })
@@ -133,6 +165,8 @@ router.put("/:nik", [
 router.delete("/:nik", async (req,res) => {
     try {
         await Employee.findOneAndRemove({ nik: req.params.nik })
+
+        res.status(200).json({ msg: "Employee deleted" })
     } catch (err) {
         console.log(err.message);
         res.status(500).json({msg:"Server error"})

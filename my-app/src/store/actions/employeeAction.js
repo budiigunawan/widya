@@ -3,10 +3,10 @@ import axios from 'axios';
 
 const url = 'http://localhost:5000/api/employees';
 
-export function getEmployees(){
+export function getEmployees(page=1){
     return (dispatch) => {
         axios({
-            url,
+            url: `${url}?page=${page}&limit=10`,
             method: 'get'
         })
         .then(response => {
